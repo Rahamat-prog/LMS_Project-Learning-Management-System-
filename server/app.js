@@ -3,6 +3,9 @@ const cors = require('cors');
 const cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const app = express();
+const userRoutes = require('./routes/userRoutes');
+const errorMiddleware = require('./middlewares/errorMiddleware');
+
 
 // middleware
 app.use(express.json());
@@ -19,6 +22,8 @@ app.use(cookieParser());
 // show the error in the console if anyone want to sent req from the unknown api ||  morgan is a loger middleware for node.js
 app.use(morgan('dev'));
 
+// API define 
+app.use('/api/v1/user', userRoutes);
 
 
 // initial router 
@@ -37,5 +42,8 @@ app.use( (req, res) => {
         path: req.originalURL
     })
 })
+
+// error middleware 
+app.use(errorMiddleware);
 
 module.exports = app;
