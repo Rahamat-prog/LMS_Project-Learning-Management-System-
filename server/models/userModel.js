@@ -29,7 +29,7 @@ const userSchema = new Schema({
         minLength: [8, "password at least 8 charactor"],
         select: false, // will not select password upon loking up a document
     },
-    avator: {
+    avatar: {
         public_id: {
             type: String
         },
@@ -40,13 +40,13 @@ const userSchema = new Schema({
     role: {
         type: String,
         enum: ['USER', 'ADMIN'],
-        default: 'USER'
+        default: 'USER' // ← Default valu || When you create a user without specifying a role, MongoDB automatically assigns 'USER'. You don't need to pass it from req.body unless you want to override the default.
     },
     forgotPasswordToken: String,
     forgotPasswordExpiry: Date,
 },
     {
-        timestamps: true,
+        timestamps: true, // ← This auto-generates createdAt & updatedAt
     },
 
 );
@@ -59,16 +59,16 @@ userSchema.pre('save', function () {
     this.password = bcrypt.hash(this.password, 10)
 })
 
-// generate token 
+// generate jwt token 
 userSchema.methods = {
-    generateJWTToken: async function() {
-        return await jwt.sign(
+    generateJWTToken: function() {
+        return  JWT.sign(
             {_id: this._id, email: this.email, subscription: this.subscription},
             process.env.JWT_SECRET,
             {expiresIn: process.env.JWT_EXPIRY}
         )
     },
-
+    // compire the plantext password with the stored password 
     compairePassword: async function(plainTextPassword) {
         return await bcrypt.compare(plainTextPassword, this.password);
     }
