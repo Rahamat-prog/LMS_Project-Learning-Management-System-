@@ -2,6 +2,7 @@ const { model, Schema } = require('mongoose');
 const { timeStamp } = require('node:console');
 const bcrypt = require('bcryptjs')
 const JWT = require('jsonwebtoken');
+const crypto = require('crypto');
 
 
 const userSchema = new Schema({
@@ -71,6 +72,15 @@ userSchema.methods = {
     // compire the plantext password with the stored password 
     compairePassword: async function(plainTextPassword) {
         return await bcrypt.compare(plainTextPassword, this.password);
+    },
+    generatePasswordResetToken: async function() {
+        const resetToken = crypto.randomBytes(20).toString('hex');
+
+        this.forgotPasswordToken = crypto
+        .createHash('sha256')
+        .update(resetToken)
+        .digest('hex')
+        this.forgotPasswordExpiry = Date.now() + 15 * 60 * 1000; // 15 min form now 
     }
 }
 
