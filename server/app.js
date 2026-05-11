@@ -9,6 +9,8 @@ const errorMiddleware = require('./middlewares/errorMiddleware');
 
 // middleware
 app.use(express.json());
+// parses incoming requests with URL-encoded data (form data).
+app.use(express.urlencoded({extended: true}))
 
 // give the access from the  the client 
 app.use(cors({
