@@ -1,18 +1,35 @@
 const jwt = require('jsonwebtoken');
 
 const isLoging = (req, res, next) => {
-    // extract the token 
+   try {
+     // extract the token // User's token stored in browser cookies automatically send karta h
     const {token} = req.cookie;
 
     if (!token) {
+        // Agar token nahi hai, unauthorized error bhejo
         return next (new AppError("unauthorized please login again", 401))
     }
+        // STEP 3: Verify the token using JWT_SECRET
+    const userDetails = jwt.verify(token, process.env.JWT_SECRET); //JWT_SECRET is a secret key used to encrypt and decrypt tokens
+    // console.log("user detals", userDetails)
 
-    const userDetails = jwt.verify(token, process.env.JWT_SECRET);
+    // STEP 4: Attach user details to request object
      req.user = userDetails;
-     
+
+    // STEP 5: Call next() to move to controller
      next();
 
+   } catch (error) {
+    // Token invalid/expired hone par ye catch hoga
+    return next(new AppError("Invalid or expired token", 401))
+   }
 }
 
 module.exports = isLoging;
+
+
+
+// If token was created with same secret "abc123def456ghi789jkl" || -> ahi karan se jab ham token create karte h tab a JWT_SECRET key bhi use karte h. taki veriry kar paye same token h ki nahi 
+    // It will decrypt successfully and return:
+    // userDetails = { id: "65f3b2c1...", email: "ali@gmail.com" }
+

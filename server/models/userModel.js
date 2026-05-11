@@ -64,13 +64,14 @@ userSchema.pre('save', function () {
 userSchema.methods = {
     generateJWTToken: function() {
         return  JWT.sign(
-            {_id: this._id, email: this.email, subscription: this.subscription},
-            process.env.JWT_SECRET,
+            {_id: this._id, email: this.email, subscription: this.subscription}, // User data → Encrypt with secret → Token string // {_id, email, subscription} + "secret_key" → "eyJhbGci..."
+            process.env.JWT_SECRET, // 
             {expiresIn: process.env.JWT_EXPIRY}
         )
     },
     // compire the plantext password with the stored password 
     compairePassword: async function(plainTextPassword) {
+        // bcrypt library use hota hai usually
         return await bcrypt.compare(plainTextPassword, this.password);
     },
     generatePasswordResetToken: async function() {
