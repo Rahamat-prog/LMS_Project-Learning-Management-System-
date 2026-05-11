@@ -3,6 +3,8 @@ const User = require('../models/userModel');
 const cloudinary = require('cloudinary');
 const fs = require('fs/promises');
 const sentEmail = require('../utils/sentEmail');
+const crypto = require('crypto');
+
 // cookie option 
 const cookieOption = {
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
@@ -171,13 +173,13 @@ const forgotPassword = async (req, res, next) => {
 
         // token generate 
         const resetToken = await user.generatePasswordResetToken();
-        console.log("resetToken", resetToken);
+        // console.log("resetToken", resetToken);
 
         // save the token 
         await user.save();
 
         const resetPasswordUrl = `${process.env.FRONTEND_URL}/reset-password/${resetToken}`;
-        // console.log("reset password link", resetPasswordUrl);
+        console.log("reset password link", resetPasswordUrl);
 
 
         const subject = 'Reset Password';
@@ -199,17 +201,39 @@ const forgotPassword = async (req, res, next) => {
 }
 }
 
+
 const resetPassword = async (req, res, next) => {
     try {
-        const { token, password } = req.body;
+        const { resetToken } = req.params;
+        const password = req.body?.password;
 
-        if (!token || !password) {
-            return next(new AppError('token and password are required', 400));
+        if (!req.body || !password) {
+            return next(new AppError('token and password are required. Ensure you send JSON body with a password field.', 400));
         }
 
-        return res.status(501).json({
-            success: false,
-            message: 'reset password is not implemented yet'
+        const forgotPasswordToken = crypto
+            .createHash('sha256')
+            .update(resetToken)
+            .digest('hex');
+
+        const user = await User.findOne({
+            forgotPasswordToken,
+            forgotPasswordExpiry: { $gt: Date.now() }
+        });
+
+        if (!user) {
+            return next(new AppError('Token is expired or invalid, please try again', 400));
+        }
+
+        user.password = password;
+        user.forgotPasswordExpiry = undefined;
+        user.forgotPasswordToken = undefined;
+
+        await user.save();
+
+        return res.status(200).json({
+            success: true,
+            message: 'Password changed successfully'
         });
     } catch (error) {
         return next(new AppError(error.message, 500));
