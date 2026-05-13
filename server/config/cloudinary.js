@@ -1,4 +1,4 @@
-const cloudinaly = require('cloudinary');
+const cloudinary = require("cloudinary");
 
 // cloudinary configurtion 
 cloudinary.v2.config({

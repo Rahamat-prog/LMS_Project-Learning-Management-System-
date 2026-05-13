@@ -1,5 +1,5 @@
 const express = require('express');
-const {register, login , logout, getProfile, forgotPassword, resetPassword} = require('../controllers/controllers');
+const {register, login , logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser} = require('../controllers/controllers');
 const isLoging = require('../middlewares/authMiddleware');
 const upload = require('../middlewares/multerMiddleware')
 
@@ -7,13 +7,14 @@ const upload = require('../middlewares/multerMiddleware')
 const router = express.Router();
 
 // API define for different method
-router.post('/register', upload.single("avatar"), register);
+router.post('/register', upload.single("avatar"), register);  // upload create req.file 
 router.post('/login',login);
 router.post('/logout',logout);
 router.post('/getProfile',isLoging, getProfile);
 router.post('/forgot-password', forgotPassword);
-router.post('/reset-password/:resetToken', resetPassword);
-
+router.post('/reset-password:resetToken', resetPassword);
+router.post('/change-password', isLoging, changePassword);
+router.put('/update-user', isLoging, upload.single("avatar"), updateUser);
 
 
 module.exports = router;
