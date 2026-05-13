@@ -143,7 +143,7 @@ const logout = (req, res, next) => {
 
 const getProfile = async (req, res, next) => {
     try {
-        const userId = req.user.id;
+        const userId = req.user._id;
         const user = await User.findById(userId);
 
         return res.status(200).json({
@@ -263,7 +263,7 @@ const changePassword = async (req, res,) => {
     const {oldPassword, newPassword} = req.body
 
     // STEP 2: Extract user ID from authenticated request || id comes from JWT token (set by isLoging middleware)
-    const {id} =  req.user;
+    const id = req.user._id;
 
        // STEP 3: Validate both passwords are provided
     if (!oldPassword || !newPassword) {
@@ -300,4 +300,66 @@ const changePassword = async (req, res,) => {
     })
 }
 
-module.exports = { register, login, logout, getProfile, forgotPassword, resetPassword, changePassword }; 
+const updateUser = async (req, res, next) => {
+    //Exact the fullname from the body 
+    const {fullName} = req.body;
+    // exact the id from the req.user || auth middleware share the req.user 
+    const id = req.user._id;
+
+    // valid the full name 
+    if(!fullName) {
+        return next (new AppError("Full name is required", 400));
+    }
+
+    // find the user in db 
+    const userExits = await User.findById(id);
+
+    // if user is not exit so throw the error 
+    if(!userExits) {
+        return next (new AppError('User not found', 404));
+    }
+
+    // update the name 
+    if(fullName){
+        userExits.fullName = fullName;
+    }
+
+    // now upload the new avatar 
+     if (req.file) {  
+
+        // remove the avatar as we want to upload new one
+        await cloudinary.v2.uploader.destroy(userExits.avatar.public_id);
+
+        try { // call the uploadOnCloudinary function with the file path and go to utilis/cloudinary
+           const result = await uploadOnCloudinary(req.file.path);
+
+            //// Validate upload result
+            if (!result) {
+                return next (new AppError("Image upload failed", 500));
+            }
+
+            // save image details in database
+            userExits.avatar = {
+                    public_id: result.public_id,  // Cloudinary ID (used to delete later) ||  // ← Cloudinary generated ID
+                    secure_url: result.secure_url // HTTPS image URL (saved in DB)
+            }
+
+        } catch (error) {
+            // If upload fails, send error
+            return next(new AppError(error || `file not uploaded , please try agian `, 500));
+        }
+    }
+
+    // save the user 
+    await userExits.save();
+    
+    return res.status(200).json({
+        success: true,
+        message : "user is updated successfully"
+    })
+
+
+
+}
+
+module.exports = { register, login, logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser }; 
