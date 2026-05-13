@@ -1,9 +1,10 @@
 const jwt = require('jsonwebtoken');
+const AppError = require('../utils/errorUtils')
 
 const isLoging = (req, res, next) => {
    try {
      // extract the token // User's token stored in browser cookies automatically send karta h
-    const {token} = req.cookie;
+    const {token} = req.cookies;
 
     if (!token) {
         // Agar token nahi hai, unauthorized error bhejo
