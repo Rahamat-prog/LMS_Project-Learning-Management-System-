@@ -26,7 +26,15 @@ const isLoging = (req, res, next) => {
    }
 }
 
-module.exports = isLoging;
+// Authorized middleware -> 
+const authorizedRoles = (...roles) => async(req, res, next) => {
+    const currrentUserRole =  await req.user.role
+    if(!roles.includes(currrentUserRole)){
+        return next(new AppError('You are not authorized person to access'))
+    }
+}
+
+module.exports = {isLoging, authorizedRoles};
 
 
 
