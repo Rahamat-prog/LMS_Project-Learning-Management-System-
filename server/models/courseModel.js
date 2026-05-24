@@ -19,7 +19,7 @@ const courseSchema = new Schema({
         type: String,
         required: [true, 'category is required'],
     },
-    thumbnil: {
+    thumbnail: {
         public_id: {
             type: String,
             required: true
@@ -51,7 +51,7 @@ const courseSchema = new Schema({
         type: Number,
         default: 0
     },
-    createBy: {
+    createdBy: {
         type: String,
         required: [true, 'createBy is required'],
     }

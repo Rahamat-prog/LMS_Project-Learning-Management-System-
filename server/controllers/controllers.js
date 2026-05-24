@@ -13,7 +13,7 @@ const cookieOption = {
     secure: true
 }
 
-const register = async (req, res, next) => {
+const register = async(req, res, next) => {
 
     // STEP 1: Extract data from request body
     const { fullName, email, password } = req.body;
@@ -261,7 +261,7 @@ const resetPassword = async (req, res, next) => {
 }
 
 
-const changePassword = async (req, res,) => {
+const changePassword = async (req, res,next) => {
 
     // STEP 1: Extract old and new passwords from request body
     const {oldPassword, newPassword} = req.body
@@ -278,14 +278,14 @@ const changePassword = async (req, res,) => {
 
      // STEP 5: Check if user exists
     if(!user) {
-        return next(new AppError(error.message, 400));
+        return next(new AppError("user not found", 400));
     }
 
     // STEP 6: Verify old password is correct
     const isPasswordValid = await user.compairePassword(oldPassword)  // bcrypt.compare does: // bcrypt.compare("myPass123", "$2b$10$N9qo8uLO...")
     // STEP 7: Check if old password matches
     if (!isPasswordValid) {
-        return next(new AppError(error.message, 500));
+        return next(new AppError("Old password is incorrect", 401));
     }
     // STEP 8: Update password to new one
     user.password = newPassword;
@@ -296,7 +296,7 @@ const changePassword = async (req, res,) => {
      // STEP 10: Remove password from response (security)
     user.password = undefined;
     // STEP 11: Send success response
-    res.status(200).json({
+    return res.status(200).json({
         success: true,
         message: "password changed successfully",
         user
