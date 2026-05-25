@@ -69,8 +69,15 @@ A robust and scalable Learning Management System (LMS) backend API built with No
 - **Email Service**: Nodemailer integration for password reset emails
 - **Template Support**: HTML email templates for better UX
 
+#### 📚 Course Management
+- **Create Courses**: Add new courses with title, description, and category
+- **Update Courses**: Modify course information
+- **Delete Courses**: Remove courses from the system
+- **Add Lectures to Course**: Upload and add lecture content to courses by course ID
+- **Get Lectures**: Retrieve all lectures for a specific course
+- **Course Thumbnails**: Cloudinary integration for course thumbnail uploads
+
 ### 🚧 Upcoming Features
-- [ ] **Course Management**: Create, update, delete courses
 - [ ] **Video Upload & Streaming**: Cloudinary video integration
 - [ ] **Payment Gateway**: Razorpay integration for course purchases
 - [ ] **Admin Dashboard**: Administrative controls and analytics
