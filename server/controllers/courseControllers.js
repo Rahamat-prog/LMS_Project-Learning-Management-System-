@@ -183,4 +183,4 @@ const addLactureTocourseById = async (req, res, next) => {
     }
 }
 
-module.exports = { getAllCourses, createCourse, getLecturesByCourseId, updateCourse, removeCourse, addLactureTocourseById };    
+module.exports = { getAllCourses, createCourse, getLecturesByCourseId, updateCourse, removeCourse, addLactureTocourseById };
