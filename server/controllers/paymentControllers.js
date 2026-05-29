@@ -1,5 +1,9 @@
 const getRazorPayApiKey = (req, res, next) => {
-
+    return res.status(200).json({
+        success: true,
+        message: 'Razarpay API key',
+        key: process.env.RAZARPAY_KEY_ID
+    })
 }
 
 const buySubscription = (req, res, next) => {
