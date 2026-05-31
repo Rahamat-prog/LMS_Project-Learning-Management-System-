@@ -15,6 +15,6 @@ router.route('/:id')
     .get(isLoging, getLecturesByCourseId)
     .put(isLoging,authorizedRoles('ADMIN'), updateCourse)
     .delete(isLoging, authorizedRoles('ADMIN'), removeCourse)
-    .post(isLoging, authorizedRoles('ADMIN'), upload.single('lecture'),addLactureTocourseById)
+    .post(isLoging, authorizedRoles('ADMIN'), upload.single('lectureThumbnail'),addLactureTocourseById)
 
 module.exports = router;

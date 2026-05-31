@@ -26,7 +26,7 @@ const createCourse = async (req, res, next) => {
         }
 
         const createdBy = req.user._id; // ← From JWT token via isLoging middleware
-        console.log('✅ Step 3: createdBy from auth:', createdBy);
+        // console.log('✅ Step 3: createdBy from auth:', createdBy);
         // create instance of course 
         const course = await Course.create({
             title,
@@ -153,6 +153,7 @@ const addLactureTocourseById = async (req, res, next) => {
 
         // find the course by id 
         const course = await Course.findById(id)
+        // console.log('couse->', course);
         // if course is not found 
         if (!course) {
             return next(new AppError(error.message, 500));
@@ -161,9 +162,9 @@ const addLactureTocourseById = async (req, res, next) => {
         const lectureData = {
             title,
             description,
-            lecture: {}
+            lectureThumbnail: {}
         }
-
+        // console.log('inside lectureDat->', lectureData);
         if (req.file) {
             // console.log("req.file", req.file);
             const result = await uploadOnCloudinary(req.file.path);
@@ -172,10 +173,20 @@ const addLactureTocourseById = async (req, res, next) => {
             if (!result) {
                 return next(new AppError('file is not uploaded, kindly try again', 500));
             }
-            course.lectures.lecture.public_id = result.public_id
-            course.lectures.lecture.secure_url = result.secure_url
+            lectureData.lectureThumbnail.public_id = result.public_id
+            lectureData.lectureThumbnail.secure_url = result.secure_url
 
             await course.lectures.push(lectureData);
+            course.numberOfLactures = course.lectures.length;
+
+            // save the course in the db
+            await course.save();
+
+            return res.json({
+                success: true,
+                message: "Lecture is added successfully to the course",
+                course
+            })
         }
 
     } catch (error) {
