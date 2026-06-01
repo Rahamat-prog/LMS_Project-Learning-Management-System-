@@ -1,21 +1,22 @@
 const express = require('express');
 const { getRazorPayApiKey, buySubscription, verifySubscription, cancelSubscription, allPayments } = require('../controllers/paymentControllers');
+const { isLoging, authorizedRoles } = require('../middlewares/authMiddleware');
 
 const router = express.Router();
 
 router.route('/razorpay-key')
-    .get(getRazorPayApiKey)
+    .get(isLoging , getRazorPayApiKey)
 
 router.route('/subscribe')
-    .post(buySubscription)
+    .post(isLoging, buySubscription)
 
 router.route('/verifySubscription')
-    .post(verifySubscription)
+    .post(isLoging, verifySubscription)
 
 router.route('/unsubscribe')
-    .post(cancelSubscription)
+    .post(isLoging, cancelSubscription)
 
 router.route('/')
-    .get(allPayments)
+    .get(isLoging, authorizedRoles('ADMIN'), allPayments)
 
 module.exports = router 

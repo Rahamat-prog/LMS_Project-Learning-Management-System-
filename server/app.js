@@ -29,7 +29,7 @@ app.use(morgan('dev'));
 // prefixed API
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/courses', courseRouters);
-app.use('api/v1/payment', paymentRoutes)
+app.use('/api/v1/payments', paymentRoutes);
 
 
 // initial router - server created
