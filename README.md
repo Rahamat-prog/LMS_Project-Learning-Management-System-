@@ -77,9 +77,16 @@ A robust and scalable Learning Management System (LMS) backend API built with No
 - **Get Lectures**: Retrieve all lectures for a specific course
 - **Course Thumbnails**: Cloudinary integration for course thumbnail uploads
 
+#### 💳 Payment Gateway - Razorpay
+- **Subscription Management**: Create and manage course subscription plans
+- **Buy Subscription**: Users can purchase course subscriptions
+- **Payment Verification**: Secure payment verification with signature validation
+- **Subscription Cancellation**: Users can cancel their subscriptions
+- **Admin Payment Details**: Admin endpoint to view all payment transactions and subscriptions
+- **Payment Tracking**: Complete transaction logging with Razorpay payment IDs
+
 ### 🚧 Upcoming Features
 - [ ] **Video Upload & Streaming**: Cloudinary video integration
-- [ ] **Payment Gateway**: Razorpay integration for course purchases
 - [ ] **Admin Dashboard**: Administrative controls and analytics
 - [ ] **Enrollment System**: Course enrollment and progress tracking
 - [ ] **Discussion Forums**: User interaction features
@@ -96,10 +103,13 @@ LMS_Project/
 ├── server/                          # Backend application
 │   ├── config/
 │   │   ├── cloudinary.js           # Cloudinary configuration
-│   │   └── dbConnection.js         # MongoDB connection setup
+│   │   ├── dbConnection.js         # MongoDB connection setup
+│   │   └── razorpay.js             # Razorpay payment gateway configuration
 │   │
 │   ├── controllers/
-│   │   └── controllers.js          # User authentication controllers
+│   │   ├── controllers.js          # User authentication controllers
+│   │   ├── courseControllers.js    # Course management controllers
+│   │   └── paymentControllers.js   # Razorpay payment controllers
 │   │
 │   ├── middlewares/
 │   │   ├── authMiddleware.js       # JWT authentication middleware
@@ -107,10 +117,14 @@ LMS_Project/
 │   │   └── multerMiddleware.js     # File upload middleware
 │   │
 │   ├── models/
-│   │   └── userModel.js            # User schema and model
+│   │   ├── userModel.js            # User schema and model
+│   │   ├── courseModel.js          # Course schema and model
+│   │   └── paymentModel.js         # Payment transaction schema
 │   │
 │   ├── routes/
-│   │   └── userRoutes.js           # User-related API routes
+│   │   ├── userRoutes.js           # User-related API routes
+│   │   ├── courseRouters.js        # Course management routes
+│   │   └── paymentRoutes.js        # Payment and subscription routes
 │   │
 │   ├── utils/
 │   │   ├── cloudinary.js           # Cloudinary upload utility
@@ -169,6 +183,12 @@ LMS_Project/
    SMTP_PORT=587
    SMTP_USER=your_email@gmail.com
    SMTP_PASS=your_app_password
+   SMTP_FROM_EMAIL=noreply@lms.com
+
+   # Razorpay Payment Gateway
+   RAZORPAY_KEY_ID=your_razorpay_key_id
+   RAZORPAY_SECRET=your_razorpay_secret
+   RAZORPAY_PLAN_ID=your_razorpay_plan_id
 
    # Frontend URL
    FRONTEND_URL=http://localhost:3000
@@ -206,6 +226,30 @@ All user-related endpoints are prefixed with `/api/v1/user`
 | POST | `/reset-password/:resetToken` | Reset password with token | No |
 | POST | `/change-password` | Change password | Yes |
 | PUT | `/update-user` | Update user profile | Yes |
+
+### Payment Routes
+All payment endpoints are prefixed with `/api/v1/payments`
+
+| Method | Endpoint | Description | Auth Required | Role Required |
+|--------|----------|-------------|---------------|---------------|
+| GET | `/razorpay-key` | Get Razorpay public key | Yes | USER/ADMIN |
+| POST | `/subscribe` | Create new subscription | Yes | USER |
+| POST | `/verifySubscription` | Verify and complete payment | Yes | USER |
+| POST | `/unsubscribe` | Cancel subscription | Yes | USER |
+| GET | `/` | Get all payments (with count param) | Yes | ADMIN |
+
+### Course Routes
+All course endpoints are prefixed with `/api/v1/courses`
+
+| Method | Endpoint | Description | Auth Required |
+|--------|----------|-------------|---------------|
+| POST | `/` | Create new course | Yes (ADMIN) |
+| GET | `/` | Get all courses | No |
+| GET | `/:id` | Get course by ID | No |
+| PUT | `/:id` | Update course | Yes (ADMIN) |
+| DELETE | `/:id` | Delete course | Yes (ADMIN) |
+| POST | `/:id/lectures` | Add lecture to course | Yes (ADMIN) |
+| GET | `/:id/lectures` | Get all lectures for course | No |
 
 ### Request/Response Examples
 
