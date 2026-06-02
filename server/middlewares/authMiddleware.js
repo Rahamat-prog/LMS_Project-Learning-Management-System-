@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const AppError = require('../utils/errorUtils')
+const User = require('../models/userModel')
 
 const isLoging = (req, res, next) => {
    try {
@@ -34,15 +35,26 @@ const authorizedRoles = (...roles) => async(req, res, next) => {
     }
     next();
 }
-// 
-const authorizeSubscriber = () => {
-    const subscription = req.user.subscription
-     const currrentUserRole =   req.user.role
 
-     if(currrentUserRole !== 'ADMIN' && subscription.status !== 'active'){
-        return next (new AppError('Please subscribe to access this lectures', 403))
-     }
-     next();
+// subscription staus is use from directly db instead of use from JWT token because after unsubcribe the user still access the lecture, after unsubscribe his subscription staus is still active untill the user is logout or refresh the token. so as we want after unsubscribe the user immediately not able to access the lecture or any future.
+
+const authorizeSubscriber = () => async (req, res, next) => {
+    const { _id, role } = req.user;
+
+    if (role === 'ADMIN') {
+        return next();
+    }
+
+    const user = await User.findById(_id);
+    if (!user) {
+        return next(new AppError('Unauthorized please login again', 401));
+    }
+
+    if (user.subscription?.status !== 'active') {
+        return next(new AppError('Please subscribe to access this lectures', 403));
+    }
+
+    next();
 }
 
 module.exports = {isLoging, authorizedRoles, authorizeSubscriber};
