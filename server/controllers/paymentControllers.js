@@ -26,7 +26,8 @@ const buySubscription = async (req, res, next) => {
     try {
         // extract the id from the auth middleware 
         const id = req.user._id;
-        console.log("id -> ", id)
+        // console.log("id -> ", id)
+
         //find the user by id 
         const user = await User.findById(id);
         console.log('user is -> ', user)
@@ -75,8 +76,10 @@ const verifySubscription = async (req, res, next) => {
         const id = req.user._id;
         //1. Extract data from request | After payment, Razorpay sends these 3 things to your frontend, which then forwards them to this endpoint:
         const { razorpay_payment_id, razorpay_signature, razorpay_subscription_id } = req.body;
-        
-         console.log("razorpay sub->", razorpay_subscription_id);
+
+        // console.log("razorpay paym id->", razorpay_payment_id);
+        // console.log("razorpay sig->",  razorpay_signature);
+        // console.log("razorpay sub id->", razorpay_subscription_id);
 
         // find the usr 
         const user = await User.findById(id);
@@ -86,12 +89,14 @@ const verifySubscription = async (req, res, next) => {
         }
         // This was saved in DB during buySubscription(). We use it to cross-verify.
         const subscriptionId = user.subscription.id;
+        // console.log("user subs id->", subscriptionId)
 
         //3. 🔐 Generate your own signature — The Core Logic | Razorpay internally does the SAME thing - sends this as razorpay_signature to your frontend | And you do the same thing on your server: → you compare this with razorpay_signature
         const generateSignature = crypto
             .createHmac('sha256', process.env.RAZORPAY_SECRET) //Use your Razorpay secret as the key
             .update(`${razorpay_payment_id}|${subscriptionId}`)//Combine payment & subscription ID as data
             .digest('hex')
+        // console.log("generate sig->", generateSignature);
 
         // ✅ Match → Payment is genuine, came from Razorpay | ❌ No Match → Someone tampered with the data, reject it
         if (generateSignature !== razorpay_signature) {
@@ -115,7 +120,7 @@ const verifySubscription = async (req, res, next) => {
             message: 'Payment verified successfully'
         })
     } catch (error) {
-        console.error('verifySubscription error:', error);
+        // console.error('verifySubscription error:', error);
         return next(new AppError(getErrorMessage(error), 500));
     }
 }
@@ -143,7 +148,8 @@ const cancelSubscription = async (req, res, next) => {
         // cancel the subscription
         const subscription = await razorpay.subscriptions.cancel(subscriptionId)
 
-        // change the status of the subscription
+        //change the status of the subscription | subscription.status is the status returned by Razorpay after razorpay.subscriptions.cancel(...)
+
         user.subscription.status = subscription.status;
         await user.save();
 
