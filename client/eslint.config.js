@@ -1,29 +1,9 @@
-import js from '@eslint/js'
-import { defineConfig, globalIgnores } from 'eslint/config'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import simpleImportSort from 'eslint-plugin-simple-import-sort'
-import globals from 'globals'
+import js from "@eslint/js";
+import globals from "globals";
+import pluginReact from "eslint-plugin-react";
+import { defineConfig } from "eslint/config";
 
 export default defineConfig([
-  globalIgnores(['dist']),
-  {
-    files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs.flat.recommended,
-      reactRefresh.configs.vite,
-    ],
-    plugins: {
-      'simple-import-sort': simpleImportSort,  // 👈 moved here
-    },
-    languageOptions: {
-      globals: globals.browser,
-      parserOptions: { ecmaFeatures: { jsx: true } },
-    },
-    rules: {
-      'simple-import-sort/imports': 'error',   // 👈 moved here
-      'simple-import-sort/exports': 'error',
-    },
-  },
-])
+  { files: ["**/*.{js,mjs,cjs,jsx}"], plugins: { js }, extends: ["js/recommended"], languageOptions: { globals: globals.browser } },
+  pluginReact.configs.flat.recommended,
+]);
