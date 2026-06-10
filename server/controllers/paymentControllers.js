@@ -30,7 +30,7 @@ const buySubscription = async (req, res, next) => {
 
         //find the user by id 
         const user = await User.findById(id);
-        console.log('user is -> ', user)
+        // console.log('user is -> ', user)
 
         // if user is not available
         if (!user) {
@@ -96,7 +96,7 @@ const verifySubscription = async (req, res, next) => {
             .createHmac('sha256', process.env.RAZORPAY_SECRET) //Use your Razorpay secret as the key
             .update(`${razorpay_payment_id}|${subscriptionId}`)//Combine payment & subscription ID as data
             .digest('hex')
-        // console.log("generate sig->", generateSignature);
+        console.log("generate sig->", generateSignature);
 
         // ✅ Match → Payment is genuine, came from Razorpay | ❌ No Match → Someone tampered with the data, reject it
         if (generateSignature !== razorpay_signature) {
