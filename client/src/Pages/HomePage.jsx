@@ -15,13 +15,13 @@ export default function HomePage() {
                     </h1>
                     <p className=' text-gray-200'>Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellat, qui!</p>
                     <div className='space-x-6'>
-                        {/* course explore button  */}
+                        {/* course explore button in home page  */}
                         <Link to="/course">
                             <button className='bg-yellow-500 px-3 py-3 rounded-md font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300'>
                                 Explore Courses
                             </button>
                         </Link>
-                        {/* contact us button  */}
+                        {/* contact us button in home page  */}
                          <Link to="/contact">
                             <button className='border border-yellow-500 px-3 py-3 rounded-md font-semibold text-lg cursor-pointer hover:bg-yellow-600 transition-all ease-in-out duration-300'>
                                 Contact Us
