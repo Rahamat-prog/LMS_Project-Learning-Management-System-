@@ -8,9 +8,9 @@ export default function Footer() {
 
 
     return (
-        <div>
+        <div className="relative">
             {/* footer copy right section  */}
-            <footer className="relative left-0 bottom-0 h-[10vh] py-5 flex flex-col sm:flex-row items-center justify-between sm:px-20 text-white bg-gray-800">
+            <footer className="relative left-[50%] -ml-[50vw] w-screen h-[10vh] py-5 flex flex-col sm:flex-row items-center justify-between px-6 sm:px-20 text-white bg-gray-800">
                 <section className="text-lg">
                     Copyright {year} | All rights reserved
                 </section>
