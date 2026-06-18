@@ -6,10 +6,12 @@ import HomeLayout from '../Layouts/HomeLayout';
 import { createAccount } from '../Redux/slices/AuthSlice';
 import { login } from '../Redux/slices/AuthSlice';
 
-
 function Login() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // for handeling the loading while login 
+    const [isLoading, setIsLoading] = useState(false);
 
     // state defined for the user input 
     const [signinData, setSigninData] = useState({
@@ -19,45 +21,57 @@ function Login() {
 
     // to handel the user input 
     function handelUserInput(e) {
-        const { name, value } = e.target;
+        // const { name, value } = e.target; || anather way destructure
         setSigninData({
             ...signinData,
-            [name]: value
+            [e.target.name]: e.target.value  //  JavaScript converts [name] to "email" or "password" ||If the user is typing in the email field, e.target.name is "email" | You must use the    square brackets [name] because you want to use the value stored inside the name variable as the object key, rather than the literal string "name".
         })
     }
 
-
-
-    // // handel login action 
+    // to handel the login form 
     async function onLogin(event) {
         // to protect the page from the reload  
         event.preventDefault();
-        if ( !signinData.email || !signinData.password ) {
+
+        if (!signinData.email || !signinData.password) {
             toast.error("Please fill all the details");
             return;
         }
+        try {
+            // handel login action 
+            setIsLoading(true)
+            // dispatch login action 
+            //This sends the user's input (email and password stored in signinData) to your login asynchronous action (thunk). This action talks to your backend API.
+            const response = await dispatch(login(signinData));
+            // console.log("response> ", response);
 
-         // dispatch login action 
-        const response = await dispatch(login(signinData));
-        console.log("response> ", response);
+            if (response?.payload?.success) {
+                // clear the input filed of the login
+                setSigninData({
+                    email: "",
+                    password: "",
+                });
 
-        if (response?.payload?.success) 
-            navigate('/');
+                //navigate to the home page 
+                navigate('/');
+            } else {
+                toast.error(error?.response?.payload?.message || "Login failed, please try again");
 
-            setSigninData({
-                email: "",
-                password: "",
-            });
-        
-        // after create accout make all the input default 
-        setSigninData({
-            email: "",
-            password: "",
-        })
-   
+            }
+        } catch (error) {
+            // Catches truly unexpected failures — not API errors (those are
+            // already handled by the thunk's rejectWithValue), but things like
+            // a dispatch-level crash or network failure that throws instead of rejecting.
+            console.error("Unexpected error during login:", err);
+            toast.error("Something went wrong. Please try again.");
+
+        } finally {
+            setIsLoading(false);
+        }
     }
-    
-       
+
+
+
     return (
         <HomeLayout>
             <div className='flex items-center justify-center h-screen '>
@@ -93,16 +107,17 @@ function Login() {
                         />
                     </div>
                     <button type="submit" className='mt-2 bg-yellow-600 hover:bg-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer'>
-                        Login
+                        {isLoading ? "Logging..." : "Login"}
                     </button>
                     <p className="text-center">
-                       Do not have an account ? <Link to="/signup" className='link text-accent cursor-pointer'> Signup</Link>
+                        Do not have an account ? <Link to="/signup" className='link text-accent cursor-pointer'> Signup</Link>
                     </p>
 
                 </form>
             </div>
         </HomeLayout>
     )
+
 }
 
 export default Login;

@@ -85,9 +85,8 @@ function SignUp() {
         const response = await dispatch(createAccount(formData));
         console.log("response> ", response);
 
-        if (response?.payload?.success) 
-            navigate('/');
-
+        // if success is ture so reset the input filed 
+        if (response?.payload?.success){
             setSignupData({
                 fullName: "",
                 email: "",
@@ -95,18 +94,15 @@ function SignUp() {
                 avatar: "",
             });
 
-            setPreviewImage("");
-        
-        // after create accout make all the input default 
-        setSignupData({
-            fullName: "",
-            email: "",
-            password: "",
-            avatar: "",
-        })
+            // navigate to the home page 
+             navigate('/');
 
-        // upload image make default 
-        setPreviewImage("");
+        }else{
+            return toast.error(response?.payload?.message || "Signup is failed please try again");
+        }
+           
+
+            
     }
 
     return (

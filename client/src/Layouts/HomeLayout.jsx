@@ -5,6 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { useDispatch, useSelector } from 'react-redux';
 import stat from 'daisyui/components/stat';
+import { logout } from '../Redux/slices/AuthSlice';
 
 
 export default function HomeLayout({ children }) {
@@ -35,11 +36,11 @@ export default function HomeLayout({ children }) {
 
     // logout handle
     const handleLogout = (e) => {
-        e.preventDefault();
-
-        // const res = await dispatch(logout())
-        //if(res?.payload.success)
-        navigate("/")
+       e.preventDefault();
+       // call the logout reducer from the authSlice that clear locaStorage and resets teh redux state 
+        dispatch(logout());
+        // 
+        navigate("/login");
     }
 
     return (
@@ -52,7 +53,7 @@ export default function HomeLayout({ children }) {
                     <label htmlFor="my-drawer" className="cursor-pointer ralative" >
                         <FiMenu
                             onClick={changeWidth}
-                            className="font-bold text-white m-4"
+                            className="font-bold text-white m-4 text-2xl"
                         />
                     </label>
 
@@ -88,27 +89,26 @@ export default function HomeLayout({ children }) {
                             <Link to="/contact">Contact Us</Link>
                         </li>
 
-                        {!isLoggedIn && (
-                            <li className="absolute bottom-4 w-[50%]">
-                                <div className="w-full flex justify-start">
-                                    <button className=' btn btn-primary px-4 py-1 font-semibold rounded-md w-full cursor-pointer'>
+                          {!isLoggedIn && (
+                            <li className="absolute bottom-4 w-[40%]">
+                                <div className="w-full flex items-center gap-7">
+                                    <button className='btn btn-primary px-4 py-1 font-semibold rounded-md w-full  hover:bg-blue-700'>
                                         <Link to="/login">Login</Link>
                                     </button>
-                                    <button className='btn btn-secondary px-4 py-1 font-semibold rounded-md w-full cursor-pointer'>
+                                    <button className='btn btn-secondary px-4 py-1 font-semibold rounded-md w-full hover:bg-pink-700'>
                                         <Link to="/signup">Signup</Link>
                                     </button>
                                 </div>
                             </li>
-
                         )}
 
                           {isLoggedIn && (
-                            <li className='absolute bottom-4 w-[90%]'>
-                                <div className='w-full flex items-center justify-center'>
-                                    <button className='btn-primary px-4 py-1 font-semibold rounded-md w-full'>
+                            <li className="absolute bottom-4 w-[40%]">
+                                <div className='w-full flex items-center gap-7'>
+                                    <button className='btn btn-primary px-4 py-1 font-semibold rounded-md w-full  hover:bg-blue-700 '>
                                         <Link to='/user/profile'>Profile</Link>
                                     </button>
-                                    <button className='btn-secondary px-4 py-1 font-semibold rounded-md w-full'>
+                                    <button className='btn btn-secondary px-4 py-1 font-semibold rounded-md w-full hover:bg-pink-700'>
                                         <Link onClick={handleLogout}>Logout</Link>
                                     </button>
                                 </div>
