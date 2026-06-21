@@ -80,7 +80,7 @@ export default function HomeLayout({ children }) {
                             </li>
                         )}
                         <li>
-                            <Link to="/course">All Courses</Link>
+                            <Link to="/courses">All Courses</Link>
                         </li>
                         <li>
                             <Link to="/about">About Us</Link>
