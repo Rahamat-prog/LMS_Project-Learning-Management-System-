@@ -5,7 +5,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import Footer from '../components/Footer';
 import { useDispatch, useSelector } from 'react-redux';
 import stat from 'daisyui/components/stat';
-import { logout } from '../Redux/slices/AuthSlice';
+import { logoutUser } from '../Redux/slices/AuthSlice';
 
 
 export default function HomeLayout({ children }) {
@@ -38,7 +38,7 @@ export default function HomeLayout({ children }) {
     const handleLogout = (e) => {
        e.preventDefault();
        // call the logout reducer from the authSlice that clear locaStorage and resets teh redux state 
-        dispatch(logout());
+        dispatch(logoutUser());
         // 
         navigate("/login");
     }
