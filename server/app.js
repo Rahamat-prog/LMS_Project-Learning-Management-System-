@@ -5,7 +5,8 @@ const morgan = require('morgan');
 const app = express();
 const userRoutes = require('./routes/userRoutes');
 const courseRouters = require('./routes/courseRouters');
-const paymentRoutes = require('./routes/paymentRoutes')
+const paymentRoutes = require('./routes/paymentRoutes');
+const miscellaneousRoutes = require('./routes/miscellaneousRoutes');
 const errorMiddleware = require('./middlewares/errorMiddleware');
 
 
@@ -30,6 +31,7 @@ app.use(morgan('dev'));
 app.use('/api/v1/user', userRoutes);
 app.use('/api/v1/courses', courseRouters);
 app.use('/api/v1/payments', paymentRoutes);
+app.use('/api/v1', miscellaneousRoutes);
 
 
 // initial router - server created

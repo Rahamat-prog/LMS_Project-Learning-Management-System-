@@ -5,7 +5,7 @@ const app = require('./app');
 const connectionToDB = require('./config/dbConnection');
 require("./config/cloudinary");
 
-const PORT =    process.env.PORT || 5000
+const PORT = process.env.PORT || 5000
 
 app.listen(PORT, async () => {
     await connectionToDB();
