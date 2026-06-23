@@ -13,7 +13,7 @@ function CourseList() {
         await dispatch(getAllCourses());
     }
 
-    // at the first reload of the page 
+    // at the first reload of the page call the fuction
     useEffect(() => {
         loadCourses()
     },[])

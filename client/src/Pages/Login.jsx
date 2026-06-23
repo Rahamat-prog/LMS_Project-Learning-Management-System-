@@ -38,6 +38,10 @@ function Login() {
             return;
         }
         try {
+            // prevent the 2nd click
+             if(isLoading) {
+                return;
+            }
             // handel login action 
             setIsLoading(true)
             // dispatch login action 
@@ -106,7 +110,7 @@ function Login() {
 
                         />
                     </div>
-                    <button type="submit" className='mt-2 bg-yellow-600 hover:bg-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer'>
+                    <button disabled={isLoading} type="submit" className='mt-2 bg-yellow-600 hover:bg-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70'>
                         {isLoading ? "Logging..." : "Login"}
                     </button>
                     <p className="text-center">

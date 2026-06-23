@@ -5,10 +5,14 @@ import { useDispatch } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import HomeLayout from '../Layouts/HomeLayout';
 import { createAccount } from '../Redux/slices/AuthSlice';
+import { isEmail, isValidPassword } from '../Helpers/regexMatcher';
 
 function SignUp() {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    // for handeling the signup click button
+    const [isLoading, setIsLoading] = useState(false);
 
     // to state for store the avatar if image is uploaded so img will be show otherwise the circle icon will be show 
     const [previewImage, setPreviewImage] = useState("");
@@ -52,57 +56,71 @@ function SignUp() {
 
     // // handel create new account 
     async function createNewAccount(event) {
-        // to protect the page from the reload  
-        event.preventDefault();
-        if (!signupData.fullName || !signupData.email || !signupData.password || !signupData.avatar) {
-            toast.error("Please fill all the details");
-            return;
+
+        try {
+            // Prevent action if already loading
+            if(isLoading) {
+                return;
+            }
+            // Disable the button immediately
+            setIsLoading(true)
+
+            // to protect the page from the reload  
+            event.preventDefault();
+
+            if (!signupData.fullName || !signupData.email || !signupData.password || !signupData.avatar) {
+                toast.error("Please fill all the details");
+                return;
+            }
+            // validate for name 
+            if (signupData.fullName.length < 5) {
+                toast.error("Name should be atleast of 5 character");
+                return;
+            }
+            // validate for email id
+            if (!isEmail(signupData.email)) {
+                toast.error("Please enter the valid email id")
+                return;
+            }
+            // validation for password 
+            if (!isValidPassword(signupData.password)) {
+                toast.error("Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character (like @, $, !, or %).")
+                return;
+            }
+
+            // To append data to a FormData object in React,
+            const formData = new FormData();
+            formData.append("fullName", signupData.fullName);
+            formData.append("email", signupData.email);
+            formData.append("password", signupData.password);
+            formData.append("avatar", signupData.avatar);
+
+            // dispatch create account action 
+            const response = await dispatch(createAccount(formData));
+            // console.log("response> ", response);
+
+            // if success is ture so reset the input filed 
+            if (response?.payload?.success) {
+                setSignupData({
+                    fullName: "",
+                    email: "",
+                    password: "",
+                    avatar: "",
+                });
+
+                // navigate to the home page 
+                navigate('/');
+
+            } else {
+                return toast.error(response?.payload?.message || "Signup is failed please try again");
+            }
+        } catch (error) {
+            console.error("Unexpected error during login:", err);
+            toast.error("Something went wrong. Please try again.");
+        }finally {
+            setIsLoading(false);
         }
-        // validate for name 
-        if (signupData.fullName.length < 5) {
-            toast.error("Name should be atleast of 5 character");
-            return;
-        }
-        // validate for email id
-        if (!signupData.email.match(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)) {
-            toast.error("Please enter the valid email id")
-            return;
-        }
-        // validation for password 
-        if (!signupData.password.match(/^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/)) {
-            toast.error("Password must be at least 8 characters long and include an uppercase letter, a lowercase letter, a number, and a special character (like @, $, !, or %).")
-            return;
-        }
 
-        // To append data to a FormData object in React,
-        const formData = new FormData();
-        formData.append("fullName", signupData.fullName);
-        formData.append("email", signupData.email);
-        formData.append("password",signupData.password);
-        formData.append("avatar", signupData.avatar);
-
-        // dispatch create account action 
-        const response = await dispatch(createAccount(formData));
-        console.log("response> ", response);
-
-        // if success is ture so reset the input filed 
-        if (response?.payload?.success){
-            setSignupData({
-                fullName: "",
-                email: "",
-                password: "",
-                avatar: "",
-            });
-
-            // navigate to the home page 
-             navigate('/');
-
-        }else{
-            return toast.error(response?.payload?.message || "Signup is failed please try again");
-        }
-           
-
-            
     }
 
     return (
@@ -170,8 +188,8 @@ function SignUp() {
 
                         />
                     </div>
-                    <button type="submit" className='mt-2 bg-yellow-600 hover:bg-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer'>
-                        Create account
+                    <button disabled={isLoading} type="submit" className='mt-2 bg-yellow-600 hover:bg-yellow-500 transition-all ease-in-out duration-300 rounded-sm py-2 font-semibold text-lg cursor-pointer disabled:bg-gray-400 disabled:cursor-not-allowed disabled:opacity-70'>
+                        {isLoading ? "Creating Account..." : "Create Account"}
                     </button>
                     <p className="text-center">
                         Already have an account ? <Link to="/login" className='link text-accent cursor-pointer'> Login</Link>
