@@ -53,7 +53,7 @@ const courseSchema = new Schema({
     },
     createdBy: {
         type: String,
-        required: [true, 'createBy is required'],
+        required: [true, 'createdBy is required'],
     }
 }, {
     timestamps: true

@@ -19,14 +19,14 @@ const getAllCourses = async (req, res, next) => {
 
 const createCourse = async (req, res, next) => {
     try {
-        const { title, description, category, lectures } = req.body;
+        const { title, description, category, createdBy, lectures } = req.body;
 
-        if (!title || !description || !category) {
-            return next(new AppError('title, description, category and createBy are required', 400));
+        if (!title || !description || !category || !createdBy) {
+            return next(new AppError('title, description, category and createdBy are required', 400));
         }
 
-        const createdBy = req.user._id; // ← From JWT token via isLoging middleware
-        // console.log('✅ Step 3: createdBy from auth:', createdBy);
+        // const createdBy = req.user._id; // ← From JWT token via isLoging middleware
+        console.log('createdBy:', createdBy);
         // create instance of course 
         const course = await Course.create({
             title,

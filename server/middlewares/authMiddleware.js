@@ -11,14 +11,14 @@ const isLoging = (req, res, next) => {
         // Agar token nahi hai, unauthorized error bhejo
         return next (new AppError("unauthorized please login again", 401))
     }
-        // STEP 3: Verify the token using JWT_SECRET
+        //  Verify the token using JWT_SECRET
     const userDetails = jwt.verify(token, process.env.JWT_SECRET); //JWT_SECRET is a secret key used to encrypt and decrypt tokens
-    // console.log("user detals", userDetails)
+    console.log("userDetals", userDetails)
 
-    // STEP 4: Attach user details to request object
+    // Attach user details to request object
      req.user = userDetails;
 
-    // STEP 5: Call next() to move to controller
+    //Call next() to move to controller
      next();
 
    } catch (error) {
