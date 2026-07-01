@@ -7,7 +7,7 @@ const {isLoging, authorizedRoles} = require('../middlewares/authMiddleware');
 // console.log('isLoging type:', typeof isLoging);
 // console.log('isLoging:', isLoging); // Log the actual object
 
-const {register, login , logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser} = require('../controllers/controllers');
+const {register, login , logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser, getLoggedInUserDetails} = require('../controllers/controllers');
 
 // instance 
 const router = express.Router();
@@ -21,6 +21,7 @@ router.post('/forgot-password', forgotPassword);
 router.post('/reset-password/:resetToken', resetPassword);
 router.post('/change-password', isLoging, changePassword);
 router.put('/update-user', isLoging, upload.single("avatar"), updateUser);
+router.get('/me', isLoging, getLoggedInUserDetails);
 
 
 module.exports = router;

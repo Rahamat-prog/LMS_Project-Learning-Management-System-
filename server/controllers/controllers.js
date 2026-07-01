@@ -366,4 +366,19 @@ const updateUser = async (req, res, next) => {
 
 }
 
-module.exports = { register, login, logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser }; 
+const getLoggedInUserDetails = async (req, res, next) => {
+    try {
+        const user = await User.findById(req.user._id).select('-password');
+        if (!user) {
+            return next(new AppError("User not found", 404));
+        }
+        return res.status(200).json({
+            success: true,
+            user
+        });
+    } catch (error) {
+        return next(new AppError("Failed to fetch user details", 500));
+    }
+};
+
+module.exports = { register, login, logout, getProfile, forgotPassword, resetPassword, changePassword, updateUser, getLoggedInUserDetails }; 
